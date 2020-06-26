@@ -22,6 +22,9 @@ import { Product } from "./Product";
   
     @Column()
     payment: string;
+
+    @Column({default:"ARS"})
+    currency: string;
   
     @ManyToOne(() => User, {
       cascade: true, eager:true

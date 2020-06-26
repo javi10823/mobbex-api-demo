@@ -10,8 +10,8 @@ export const getUsers = async (
     const users = await User.find();
     return res.status(200).json(users);
   } catch (e) {
-    console.log("Ocurrio un error al buscar usuarios", e);
-    return res.status(404).json({ error: "Usuarios no encontrados" });
+    console.log("An error appear when trying to get the users", e);
+    return res.status(404).json({ error: "An error appear when trying to get the users" });
   }
 };
 
@@ -21,11 +21,11 @@ export const getOneUser = async (
 ): Promise<Response> => {
   try {
     const user = await User.findOne(req.params.id);
-    if (!user) return res.status(404).json({error:"el usuario no existe"})
+    if (!user) return res.status(404).json({error:"User already exist"})
     return res.status(200).json(user);
   } catch (e) {
     console.log("Ocurrio un error al buscar el usuario", e);
-    return res.status(404).json({ error: "Usuario no encontrado" });
+    return res.status(404).json({ error: "User not found" });
   }
 };
 
@@ -33,21 +33,23 @@ export const createUser = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const {email,name,lastname,password} = req.body
+  const {email,name,lastname,password,phone,address} = req.body
   try {
     const userExist = await User.findOne({email: req.body.email})
-    if (userExist) return res.status(404).json({error:"El usuario ya existe"})
+    if (userExist) return res.status(404).json({error:"User already exist"})
     const passwordHashed =  await bcrypt.hash(password, 10)
      await User.insert({
       email,
       name,
       lastname,
-      password:passwordHashed
+      password:passwordHashed,
+      phone,
+      address
     });
-    return res.status(200).json({ message: "Usuario creado con exito"});
+    return res.status(200).json({ message: "User saved succesfully"});
   } catch (e) {
-    console.log("Ocurrio un error al crear usuario", e);
-    return res.status(404).json({ error: "Error al crear usuario" });
+    console.log("An error appear when trying to create an user", e);
+    return res.status(404).json({ error: "An error appear when trying to create an user" });
   }
 };
 
@@ -60,8 +62,8 @@ export const updateUser = async (
     const user = await User.findOne(req.params.id, {select:['email', "name"]})
     return res.status(200).json(user);
   } catch (e) {
-    console.log("Ocurrio un error al buscar usuarios", e);
-    return res.status(404).json({ error: "Usuarios no modificado", e });
+    console.log("An error appear", e);
+    return res.status(404).json({ error: "Unmodified User ", e });
   }
 };
 
@@ -71,9 +73,9 @@ export const deleteUser = async (
 ): Promise<Response> => {
   try {
     const results = await User.delete(req.params.id);
-    return res.status(200).json({message:"Usuario eliminado con exito", data: results});
+    return res.status(200).json({message:"User deleted succesfully", data: results});
   } catch (e) {
-    console.log("Ocurrio un error al intentar eliminar usuario");
-    return res.status(404).json({ error: "Error al eliminar" });
+    console.log("An error appear when trying to delete an user");
+    return res.status(404).json({ error: "An error appear when trying to delete an user" });
   }
 };
