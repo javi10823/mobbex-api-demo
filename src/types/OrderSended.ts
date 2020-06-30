@@ -4,7 +4,8 @@ export interface OrderSended {
     reference?:string,
     description?:string,
     items:Items[],
-    return_url:string
+    return_url:string,
+    options:any
 }
 
 interface Items {

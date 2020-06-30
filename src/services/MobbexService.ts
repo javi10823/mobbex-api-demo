@@ -43,8 +43,23 @@ const createOrder = (order: any, itemsToSend: any) => {
     currency: "ARS",
     items,
     return_url: "https://facebook.com",
-    description: "Probando",
+    description: "Gracias por elegirnos !",
     reference: order.reference,
+    options: {
+      theme: {
+        type: "light",
+        background: "#4002c4",
+        showHeader: true,
+        header: {
+          name: "NextDots",
+          logo:
+            "https://scontent.faep8-2.fna.fbcdn.net/v/t1.0-9/p960x960/72368501_1279612048876444_1648131903850545152_o.png?_nc_cat=107&_nc_sid=85a577&_nc_ohc=zgUNG4fSW_gAX9rmOCX&_nc_ht=scontent.faep8-2.fna&oh=34496ee606002b59d16eee17df040f12&oe=5F21042F",
+        },
+        colors: {
+          primary: "#FF0000",
+        },
+      },
+    },
   };
   return newOrder;
 };
