@@ -21,7 +21,7 @@ router.post('/category',createCategory);
 router.put('/category/:id',updateCategory);
 router.delete('/category/:id',deleteCategory);
 
-router.get('/oders', getOrders);
+router.get('/orders', getOrders);
 router.get('/orders/:id', getOneOrder);
 router.post('/orders',createOrder);
 router.put('/orders/:id',updateOrder);

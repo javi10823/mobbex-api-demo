@@ -32,13 +32,13 @@ export const createOrder = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const {total,payment,client,products} = req.body
+  const {total,payment,client,items} = req.body
   try {
      await Order.insert({
       total,
       payment,
       client,
-      products
+      items
     });
     return res.status(200).json({ message: "Order saved "});
   } catch (e) {

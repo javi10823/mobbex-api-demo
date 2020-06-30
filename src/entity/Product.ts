@@ -24,7 +24,7 @@ import {
     @Column()
     description: string;
    
-    @ManyToOne(() => Category) 
+    @ManyToOne(() => Category,{eager:true}) 
     category: Category;  
   
     @Column({default:true})

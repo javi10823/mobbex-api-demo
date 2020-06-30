@@ -5,27 +5,29 @@ import {
     BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    ManyToOne
   } from "typeorm";
-
-import { Product } from "./Product";
   
-  @Entity({name:'category'})
-  export class Category extends BaseEntity {
+import { Product } from "./Product";
+import { Order } from "./Order";
+  
+  @Entity({name:'orderItem'})
+  export class OrderItem extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
   
     @Column({nullable:false})
-    name: string;
+    quantity: number;
   
+    @ManyToOne(() => Product,{eager:true}) 
+    item: Product;  
+  
+    @ManyToOne(() => Order) 
+    order: Order;  
+
     @Column()
-    description: string;
-  
-    @OneToMany(() => Product, product => product.category, {
-      cascade: true
-    }) 
-    products: Product[];  
-  
+    total: number;
+
     @Column({default:true})
     status: boolean;
 

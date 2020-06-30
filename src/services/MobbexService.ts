@@ -1,28 +1,70 @@
 import axios from "axios";
-import config from '../config'
+import config from "../config";
+import { Order } from "../entity/Order";
+import { OrderSended } from "../types/OrderSended";
+import { OrderItem } from "../entity/OrderItem";
 
 const MobbexService = async (body: any) => {
   try {
     console.log(body);
-    const response = await sendtoCheckout(config.urlCheckout, body);
-    return { payment: response.data };
+    const order = await Order.insert(body);
+    const orderToSend = await Order.findOne(order.identifiers[0].id);
+    body.items.forEach(async (element: any) => {
+      await OrderItem.insert({
+        quantity: element.quantity,
+        item: element.item,
+        total: element.total,
+        order: orderToSend,
+      });
+    });
+    const itemsToSend = await OrderItem.find({ where: { order: orderToSend } });
+    const newOrder = createOrder(orderToSend, itemsToSend);
+    const response = await sendtoCheckout(newOrder);
+    return response;
   } catch (e) {
-    console.log(e);
+    console.log("Error in Mobbex Service", e);
+    return "Error in Mobbex service";
   }
 };
 
-const sendtoCheckout = async (url: string, data: any) => {
-  console.log("Start Payment");
+const createOrder = (order: any, itemsToSend: any) => {
+  const items = itemsToSend.map(
+    (element: { quantity: any; item: { name: any }; total: any }) => {
+      return {
+        quantity: element.quantity,
+        description: element.item.name,
+        total: element.total,
+      };
+    }
+  );
+
+  const newOrder: OrderSended = {
+    total: order.total,
+    currency: "ARS",
+    items,
+    return_url: "https://facebook.com",
+    description: "Probando",
+    reference: order.reference,
+  };
+  return newOrder;
+};
+
+const sendtoCheckout = async (order: OrderSended) => {
   try {
-    const response = await axios.post(url, data, {
-      headers: {
-        "x-api-key": config.apikey,
-        "x-access-token": config.token,
-      },
-    });
+    const response = await axios.post(
+      "https://api.mobbex.com/p/checkout",
+      order,
+      {
+        headers: {
+          "x-api-key": config.apikey,
+          "x-access-token": config.token,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.log(error);
+    console.log("Error in checkout", error);
+    return "Error in chekout";
   }
 };
 

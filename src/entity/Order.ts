@@ -6,35 +6,40 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
-    ManyToMany
+    OneToMany,
+    Generated,
+    JoinTable,
+    JoinColumn
   } from "typeorm";
 
 import { User } from "./User";
-import { Product } from "./Product";
+import { OrderItem } from "./OrderItem";
   
-  @Entity({name:'order'})
+  @Entity({name:'orders'})
   export class Order extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
   
-    @Column({nullable:false})
+    @Column()
     total: number;
   
-    @Column()
+    @Column({nullable:true})
     payment: string;
 
     @Column({default:"ARS"})
     currency: string;
+
+    @Column()
+    @Generated("uuid")
+    reference: string;
   
     @ManyToOne(() => User, {
       cascade: true, eager:true
     }) 
     client: User;  
   
-    @ManyToMany(() => Product, {
-        cascade: true, eager:true
-      }) 
-      products: Product[];  
+    @OneToMany(() => OrderItem,  orderItem => orderItem.order, {eager:true})
+    items: OrderItem[];  
 
     @Column({default:true})
     status: boolean;
